@@ -1,6 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const graphqlHttp = require('express-graphql');
+
+const grpahQlSchema = require('./graphql/schema/index');
+const graphQlResolvers = require('./graphql/resolvers/index');
 
 
 const app = express();
@@ -18,6 +22,16 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+// "připojení" graphQL k aplikačnímu serveru
+app.use(
+    '/graphql',
+    graphqlHttp({
+        schema: grpahQlSchema,
+        rootValue: graphQlResolvers,
+        graphiql: true
+    })
+);
 
 
 //připojení k mongoDB cluster pomocí mongoose
