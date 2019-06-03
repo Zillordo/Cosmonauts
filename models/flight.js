@@ -9,7 +9,7 @@ const flightSchema = new Schema({
         required: true
     },
     capacity: {
-        type: I,
+        type: Number,
         required: true
     },
     registeredCosmonauts: [
