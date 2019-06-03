@@ -17,7 +17,7 @@ app.use((req, res, next) => {
         return res.sendStatus(200);
     }
     next();
-    });
+});
 
 
 //připojení k mongoDB cluster pomocí mongoose
