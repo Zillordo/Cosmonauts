@@ -18,10 +18,10 @@ module.exports = {
     createCosmonaut: async args => {
         try {
             const cosmo = new Cosmonaut({
-                name: args.cosmonatuInput.name,
-                surName: args.cosmonatuInput.surName,
-                age: args.cosmonatuInput.age,
-                experience: args.cosmonatuInput.experience
+                name: args.cosmonautInput.name,
+                surName: args.cosmonautInput.surName,
+                age: args.cosmonautInput.age,
+                experience: args.cosmonautInput.experience
             });
 
             const res = await cosmo.save();
