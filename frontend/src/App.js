@@ -1,6 +1,8 @@
 import React from 'react';
 import './style/style.css'
 import { GetData } from './queries/queries';
+import { CreateCosmonaut, CreateFlight } from './queries/mutation';
+// import {CreateCosmonaut, CreateFlight} from './queries/mutation';
 // import backdrop from './components/backdrop/Backdrop';
 
 // WriteCosmo a WriteFlights jsou pouze na test funkčnosti
@@ -39,7 +41,8 @@ const WriteFlights = ({ data }) => {
 const App = () => {
   const fData = GetData('flights');
   const cData = GetData('cosmonauts');
-  
+
+
   return (
     <div className="App">
       <div className="Container">

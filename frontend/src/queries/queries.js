@@ -80,11 +80,4 @@ const GetData = (type) => {
   return data;
 };
 
-const CreateFlight = (props) => {
-
-}
-
-export {
-  GetData,
-  CreateFlight
-};
+export { GetData };
