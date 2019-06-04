@@ -4,14 +4,16 @@ import { useState, useEffect } from 'react';
 
 const GetData = (type) => {
 
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
 
     let requestBody = "";
 
     switch (type) {
-        case 'flights':
-            requestBody = {
-                query: `
+      case 'flights':
+        requestBody = {
+          query: `
                 query {
                   flights {
                     _id
@@ -27,12 +29,12 @@ const GetData = (type) => {
                   }
                 }
               `
-            };
+        };
 
-            break;
-        case 'cosmonauts':
-            requestBody = {
-                query: `
+        break;
+      case 'cosmonauts':
+        requestBody = {
+          query: `
             query {
               cosmonauts {
                 _id
@@ -43,38 +45,46 @@ const GetData = (type) => {
               }
             }
           `
-            }
-            break;
+        }
+        break;
 
-        default:
-            // requestBody = '';
-            break;
+      default:
+        requestBody = '';
+        break;
     };
 
-    useEffect(() => {
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(res => {
-                if (res.status !== 200 && res.status !== 201) {
-                    throw new Error('res.status == 200 || 201 "Faild!"');
-                }
-                return res.json();
+    let ignore = false;
 
-            })
-            .then(resData => {
-                setData(resData.data);
-            })
-            .catch(err => console.log(err))
-    }, []);
+    async function get() {
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
 
-    return data;
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error('res.status 200/201 "Faild"!');
+      };
+
+      const d = await res.json();
+
+      if (!ignore) setData(d.data);
+    }
+
+    get();
+    return () => { ignore = true; }
+  }, []);
+
+  return data;
 };
 
+const CreateFlight = (props) => {
+
+}
+
 export {
-    GetData
+  GetData,
+  CreateFlight
 };

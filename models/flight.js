@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 
 const flightSchema = new Schema({
     date: {
-        type: Date,
-        default: Date.now,
+        type: String,
         required: true
     },
     capacity: {
