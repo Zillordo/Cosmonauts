@@ -39,8 +39,7 @@ const WriteFlights = ({ data }) => {
 const App = () => {
   const fData = GetData('flights');
   const cData = GetData('cosmonauts');
-
-
+  
   return (
     <div className="App">
       <div className="Container">

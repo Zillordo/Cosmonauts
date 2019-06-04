@@ -75,7 +75,7 @@ const GetData = (type) => {
 
     get();
     return () => { ignore = true; }
-  }, []);
+  }, [type]);
 
   return data;
 };
