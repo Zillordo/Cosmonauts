@@ -32,7 +32,7 @@ module.exports = {
 
     deleteFlight: async args => {
         try {
-            await flight.deleteOne({ _id: args.flightId });
+            await Flight.deleteOne({ _id: args.flightId });
             return null;
         }
         catch (error) {
