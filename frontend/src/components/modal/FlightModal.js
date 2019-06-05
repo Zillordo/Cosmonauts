@@ -9,7 +9,6 @@ const modal = props => (
                     id="datetime-local"
                     label="Date"
                     type="datetime-local"
-                    defaultValue="2017-05-24T10:30"
                     value={props.date}
                     onChange={props.onDateChange}
                     InputLabelProps={{

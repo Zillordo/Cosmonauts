@@ -1,10 +1,11 @@
 import React, { useState, useContext, createContext } from 'react';
 import './style/style.css'
 import { GetData } from './queries/queries';
-import { CreateCosmonaut, CreateFlight } from './queries/mutation';
+import { CreateCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut } from './queries/mutation';
 import Backdrop from './components/backdrop/Backdrop';
 import FlightMOdal from './components/modal/FlightModal';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete'
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 
@@ -27,9 +28,15 @@ const CosmonautsData = createContext();
 //     )
 //   });
 // }
+const useStyles = makeStyles(theme => ({
+  fab: {
+    margin: theme.spacing(1),
+  }
+}));
 
 const WriteFlights = () => {
   const data = useContext(FlightsData);
+  const classes = useStyles();
 
   if (data == null) {
     return null;
@@ -37,25 +44,27 @@ const WriteFlights = () => {
   return data.map(flight => {
 
     return (
-      <div key={flight._id}>
-        <p>{flight.capacity}</p>
-        <p>{flight.date}</p>
+      <div key={flight._id} className="flight-container">
+        <div className="text-container">
+          <div>{flight.date}</div>
+          <div>{flight.capacity}</div>
+        </div>
+        <div className="delete-container">
+          <Fab aria-label="Delete" className={classes.fab}>
+            <DeleteIcon onClick={() => DeleteFlight(flight._id)} />
+          </Fab>
+        </div>
       </div>
     )
   });
 }
 
-const useStyles = makeStyles(theme => ({
-  fab: {
-    margin: theme.spacing(1),
-  }
-}));
 
 
 const App = () => {
   const [flightToggle, setFlightToggle] = useState();
-  const [date, setDate] = useState();
-  const [capacity, setCapacity] = useState();
+  const [date, setDate] = useState("2019-05-19T10:30");
+  const [capacity, setCapacity] = useState('');
 
   const fData = GetData('flights');
   const cData = GetData('cosmonauts');
