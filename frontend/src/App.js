@@ -1,6 +1,6 @@
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 import './style/style.css'
-import { GetData } from './queries/queries';
+import { GetData, getFlights } from './queries/queries';
 import { CreateCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut } from './queries/mutation';
 import Backdrop from './components/backdrop/Backdrop';
 import FlightMOdal from './components/modal/FlightModal';
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const WriteFlights = () => {
+const WriteFlights = (props) => {
   const data = useContext(FlightsData);
   const classes = useStyles();
 
@@ -51,7 +51,7 @@ const WriteFlights = () => {
         </div>
         <div className="delete-container">
           <Fab aria-label="Delete" className={classes.fab}>
-            <DeleteIcon onClick={() => DeleteFlight(flight._id)} />
+            <DeleteIcon onClick={() => {DeleteFlight(flight._id); props.getData()}} />
           </Fab>
         </div>
       </div>
@@ -61,19 +61,32 @@ const WriteFlights = () => {
 
 
 
+
 const App = () => {
   const [flightToggle, setFlightToggle] = useState();
   const [date, setDate] = useState("2019-05-19T10:30");
   const [capacity, setCapacity] = useState('');
+  const [flight, setFlight] = useState([]);
 
   const fData = GetData('flights');
   const cData = GetData('cosmonauts');
 
   const classes = useStyles();
 
+  const get = async () => {
+    const data = await getFlights();
+    setFlight(data);
+  }
+
+  useEffect(() => {
+    get();
+  }, []);
+
+
+  console.log(flight);
 
   return (
-    <FlightsData.Provider value={fData.flights}>
+    <FlightsData.Provider value={flight}>
       <CosmonautsData.Provider value={cData.cosmonauts}>
         <div className="App">
           <div className="Container">
@@ -81,13 +94,15 @@ const App = () => {
               <AddIcon onClick={() => setFlightToggle(!flightToggle)} />
             </Fab>
 
-            <WriteFlights />
+            <WriteFlights
+              getData={() => get()}
+            />
 
             {flightToggle &&
               <React.Fragment>
                 <Backdrop />
                 <FlightMOdal
-                  submit={() => (CreateFlight(date, capacity, WriteFlights), setFlightToggle(!flightToggle))}
+                  submit={() => { CreateFlight(date, capacity, WriteFlights); setFlightToggle(!flightToggle) }}
                   date={date}
                   onDateChange={e => setDate(e.target.value)}
                   capacity={capacity}
