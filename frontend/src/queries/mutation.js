@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 
 
-
-const CreateFlight = (date, capacity, cb) => {
+const CreateFlight = (date, capacity) => {
 
 
     let requestBody = {
@@ -31,10 +29,9 @@ const CreateFlight = (date, capacity, cb) => {
         return await res.json();
     }
     get();
-    cb();
 };
 
-const CreateCosmonaut = (name, surName, age, exp, callBack) => {
+const CreateCosmonaut = (name, surName, age, exp) => {
 
     let requestBody = {
         query: `
@@ -60,7 +57,6 @@ const CreateCosmonaut = (name, surName, age, exp, callBack) => {
             throw new Error('res.status 200/201 "Faild"!');
         };
 
-        await callBack();
         return await res.json();
 
     }
