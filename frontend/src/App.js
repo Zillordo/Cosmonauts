@@ -44,6 +44,13 @@ const WriteFlights = (props) => {
   const [age, setAge] = useState('');
   const [exp, setExp] = useState('');
 
+  const resetC = () => {
+    setName('');
+    setSurName('');
+    setAge('');
+    setExp('');
+  }
+
   if (data == null) {
     return null;
   }
@@ -82,8 +89,8 @@ const WriteFlights = (props) => {
               onAgeChange={e => setAge(e.target.value)}
               exp={exp}
               onExpChange={e => setExp(e.target.value)}
-              submit={e => { e.preventDefault(); reg(); setCosmotoggle(!cosmoToggle) }}
-              onCancleClick={() => setCosmotoggle(!cosmoToggle)}
+              submit={e => { e.preventDefault(); reg(); setCosmotoggle(!cosmoToggle); resetC() }}
+              onCancleClick={() => { setCosmotoggle(!cosmoToggle); resetC() }}
             />
           </React.Fragment>
         }
