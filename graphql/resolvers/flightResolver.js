@@ -1,4 +1,18 @@
 const Flight = require('../../models/flight');
+const Cosmonaut = require('../../models/cosmonaut');
+
+const cosmo = async cosmoIds => {
+    try {
+        const cosmos = await Cosmonaut.find({ _id: { $in: cosmoIds } });
+
+        return cosmos.map(cosmo => {
+            return { ...cosmo._doc, _id: cosmo.id };
+        });
+    }
+    catch (err) {
+        throw err;
+    }
+};
 
 module.exports = {
     flights: async () => {
@@ -6,7 +20,7 @@ module.exports = {
             const flights = await Flight.find();
 
             return flights.map(flight => {
-                return { ...flight._doc, _id: flight.id }
+                return { ...flight._doc, _id: flight.id , registeredCosmonauts: cosmo.bind(this, flight.registeredCosmonauts) }
             });
         }
         catch (error) {

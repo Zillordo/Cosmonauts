@@ -1,9 +1,10 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import './style/style.css'
-import { getCosmonauts, getFlights } from './queries/queries';
-import { CreateCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut } from './queries/mutation';
+import { getFlights } from './queries/queries';
+import { RegisterCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut } from './queries/mutation';
 import Backdrop from './components/backdrop/Backdrop';
-import FlightMOdal from './components/modal/FlightModal';
+import FlightModal from './components/modal/FlightModal';
+import CosmoModal from './components/modal/CosmoModal';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete'
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,23 +12,24 @@ import Fab from '@material-ui/core/Fab';
 
 
 const FlightsData = createContext();
-const CosmonautsData = createContext();
-// WriteCosmo a WriteFlights jsou pouze na test funkčnosti
-// const WriteCosmo = ({ data }) => {
 
-//   if (data == null) {
-//     return null;
-//   }
-//   return data.map(cosmo => {
 
-//     return (
-//       <div key={cosmo._id}>
-//         <p>{cosmo.name} {cosmo.surName}</p>
-//         <p>{cosmo.experience}</p>
-//       </div>
-//     )
-//   });
-// }
+const WriteCosmo = ({ data }) => {
+  if (data == null) {
+    console.log("chyba výpisu kosmonautů");
+    return null;
+  }
+
+  return data.map(cosmo => {
+    return (
+      <div key={cosmo._id}>
+        {cosmo.name} {cosmo.surName}
+      </div>
+    )
+  });
+}
+
+
 const useStyles = makeStyles(theme => ({
   fab: {
     margin: theme.spacing(1),
@@ -36,24 +38,55 @@ const useStyles = makeStyles(theme => ({
 
 const WriteFlights = (props) => {
   const data = useContext(FlightsData);
-  const classes = useStyles();
+  const [cosmoToggle, setCosmotoggle] = useState();
+  const [name, setName] = useState('');
+  const [surName, setSurName] = useState('');
+  const [age, setAge] = useState('');
+  const [exp, setExp] = useState('');
 
   if (data == null) {
     return null;
   }
   return data.map(flight => {
 
+    const reg = () => {
+      if (flight.registeredCosmonauts.length >= flight.capacity) {
+        window.alert("Let je již plný");
+
+        return null;
+      }
+
+      RegisterCosmonaut(name, surName, age, exp, flight._id, props.getData);
+    }
+
     return (
       <div key={flight._id} className="flight-container">
         <div className="text-container">
           <div>{flight.date}</div>
           <div>{flight.capacity}</div>
+          <WriteCosmo data={flight.registeredCosmonauts} />
         </div>
         <div className="delete-container">
-          <Fab aria-label="Delete" className={classes.fab}>
-            <DeleteIcon onClick={() => { DeleteFlight(flight._id); props.getData() }} />
-          </Fab>
+          <AddIcon onClick={() => setCosmotoggle(!cosmoToggle)} />
+          <DeleteIcon onClick={() => DeleteFlight(flight._id, props.getData)} />
         </div>
+        {cosmoToggle &&
+          <React.Fragment>
+            <Backdrop />
+            <CosmoModal
+              name={name}
+              onNameChange={e => setName(e.target.value)}
+              surName={surName}
+              onSurNameChange={e => setSurName(e.target.value)}
+              age={age}
+              onAgeChange={e => setAge(e.target.value)}
+              exp={exp}
+              onExpChange={e => setExp(e.target.value)}
+              submit={e => { e.preventDefault(); reg(); setCosmotoggle(!cosmoToggle) }}
+              onCancleClick={() => setCosmotoggle(!cosmoToggle)}
+            />
+          </React.Fragment>
+        }
       </div>
     )
   });
@@ -67,7 +100,6 @@ const App = () => {
   const [date, setDate] = useState('');
   const [capacity, setCapacity] = useState('');
   const [flight, setFlight] = useState([]);
-  const [cosmo, setCosmo] = useState([]);
 
   const classes = useStyles();
 
@@ -76,51 +108,45 @@ const App = () => {
     setCapacity('');
   }
 
-  const getC = async () => {
-    const datac = await getCosmonauts();
-
-    setCosmo(datac);
-  }
   const getF = async () => {
     const dataf = await getFlights();
 
     setFlight(dataf);
   }
 
+
+
   useEffect(() => {
     getF();
-    getC();
   }, []);
 
 
   return (
     <FlightsData.Provider value={flight}>
-      <CosmonautsData.Provider value={cosmo}>
-        <div className="App">
-          <div className="Container">
-            <Fab color="primary" aria-label="Add" className={classes.fab}>
-              <AddIcon onClick={() => setFlightToggle(!flightToggle)} />
-            </Fab>
+      <div className="App">
+        <div className="Container">
+          <Fab color="primary" aria-label="Add" className={classes.fab}>
+            <AddIcon onClick={() => setFlightToggle(!flightToggle)} />
+          </Fab>
 
-            <WriteFlights
-              getData={() => getF()}
-            />
+          <WriteFlights
+            getData={() => getF()}
+          />
 
-            {flightToggle &&
-              <React.Fragment>
-                <Backdrop />
-                <FlightMOdal
-                  submit={e => { e.preventDefault(); CreateFlight(date, capacity); setFlightToggle(!flightToggle); getF(); resetF() }}
-                  date={date}
-                  onDateChange={e => setDate(e.target.value)}
-                  capacity={capacity}
-                  onCapacityChange={e => setCapacity(e.target.value)}
-                  onCancleClick={() => { setFlightToggle(!flightToggle); resetF() }}
-                />
-              </React.Fragment>}
-          </div>
+          {flightToggle &&
+            <React.Fragment>
+              <Backdrop />
+              <FlightModal
+                submit={e => { e.preventDefault(); CreateFlight(date, capacity, getF); setFlightToggle(!flightToggle); getF(); resetF() }}
+                date={date}
+                onDateChange={e => setDate(e.target.value)}
+                capacity={capacity}
+                onCapacityChange={e => setCapacity(e.target.value)}
+                onCancleClick={() => { setFlightToggle(!flightToggle); resetF() }}
+              />
+            </React.Fragment>}
         </div>
-      </CosmonautsData.Provider>
+      </div>
     </FlightsData.Provider>
   );
 }

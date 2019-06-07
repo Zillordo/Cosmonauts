@@ -1,6 +1,6 @@
 
 
-const CreateFlight = (date, capacity) => {
+const CreateFlight = async (date, capacity, cb) => {
 
 
     let requestBody = {
@@ -14,29 +14,31 @@ const CreateFlight = (date, capacity) => {
     };
 
 
-    async function get() {
-        const res = await fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
 
-        if (res.status !== 200 && res.status !== 201) {
-            throw new Error('res.status 200/201 "Faild"!');
-        };
-        return await res.json();
-    }
-    get();
+    const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    if (res.status !== 200 && res.status !== 201) {
+        throw new Error('res.status 200/201 "Faild"!');
+    };
+
+    const data = await res.json();
+    await cb();
+
+    return data;
 };
 
-const CreateCosmonaut = (name, surName, age, exp) => {
+const RegisterCosmonaut = async (name, surName, age, exp, flightId, cb) => {
 
     let requestBody = {
         query: `
             mutation {
-                createCosmonaut(cosmonautInput: {name: "${name}", surName: "${surName}", age: ${age}, experience: "${exp}"}) {
+                registerCosmonaut(cosmonautInput: {name: "${name}", surName: "${surName}", age: ${age}, experience: "${exp}", flightId: "${flightId}"}) {
                   _id
                 }
               }
@@ -44,28 +46,25 @@ const CreateCosmonaut = (name, surName, age, exp) => {
     };
 
 
-    async function get() {
-        const res = await fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+    const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
 
-        if (res.status !== 200 && res.status !== 201) {
-            throw new Error('res.status 200/201 "Faild"!');
-        };
+    if (res.status !== 200 && res.status !== 201) {
+        throw new Error('res.status 200/201 "Faild"!');
+    };
 
-        return await res.json();
-
-    }
-
-    get();
+    const data = await res.json();
+    await cb();
+    return data;
 };
 
 
-const DeleteCosmonaut = (id) => {
+const DeleteCosmonaut = async (id, cb) => {
 
     let requestBody = {
         query: `
@@ -78,26 +77,25 @@ const DeleteCosmonaut = (id) => {
     };
 
 
-    async function get() {
-        const res = await fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
 
-        if (res.status !== 200 && res.status !== 201) {
-            throw new Error('res.status 200/201 "Faild"!');
-        };
+    const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
 
-        return await res.json();
-    }
+    if (res.status !== 200 && res.status !== 201) {
+        throw new Error('res.status 200/201 "Faild"!');
+    };
 
-    get();
+    const data = await res.json();
+    await cb();
+    return data;
 };
 
-const DeleteFlight = (id) => {
+const DeleteFlight = async (id, cb) => {
 
     let requestBody = {
         query: `
@@ -111,24 +109,24 @@ const DeleteFlight = (id) => {
     };
 
 
-    async function get() {
-        const res = await fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
 
-        if (res.status !== 200 && res.status !== 201) {
-            throw new Error('res.status 200/201 "Faild"!');
-        };
+    const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
 
-        return await res.json();
-    }
+    if (res.status !== 200 && res.status !== 201) {
+        throw new Error('res.status 200/201 "Faild"!');
+    };
 
-    get();
+    const data = await res.json();
+    await cb();
+
+    return data;
 };
 
 
-export { CreateCosmonaut, CreateFlight, DeleteCosmonaut, DeleteFlight };
+export { RegisterCosmonaut, CreateFlight, DeleteCosmonaut, DeleteFlight };

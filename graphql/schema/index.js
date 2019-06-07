@@ -21,6 +21,7 @@ input CosmonautInput {
     surName: String!
     age: Int!
     experience: String!
+    flightId: ID!
 }
 input FlightInput {
     date: String!
@@ -33,7 +34,7 @@ type RootQuery {
     flights: [Flight!]!
 }
 type RootMutation {
-    createCosmonaut(cosmonautInput: CosmonautInput): Cosmonaut
+    registerCosmonaut(cosmonautInput: CosmonautInput): Cosmonaut
     createFlight(flightInput: FlightInput): Flight
     deleteCosmonaut(cosmonautId: ID!): Cosmonaut
     deleteFlight(flightId: ID!): Flight

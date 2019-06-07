@@ -1,4 +1,6 @@
 const Cosmonaut = require('../../models/cosmonaut');
+const Flight = require('../../models/flight');
+
 
 module.exports = {
 
@@ -15,8 +17,9 @@ module.exports = {
         }
     },
 
-    createCosmonaut: async args => {
+    registerCosmonaut: async args => {
         try {
+
             const cosmo = new Cosmonaut({
                 name: args.cosmonautInput.name,
                 surName: args.cosmonautInput.surName,
@@ -24,7 +27,13 @@ module.exports = {
                 experience: args.cosmonautInput.experience
             });
 
+
             const res = await cosmo.save();
+
+            await Flight.findById(args.cosmonautInput.flightId, (err, doc) => {
+                doc.registeredCosmonauts.push(cosmo);
+                doc.save();
+            });
 
             return { ...res._doc, _id: res.id };
         }

@@ -22,7 +22,7 @@ $blue: rgb(0, 112, 177);
 .flight-modal {
   position: absolute;
   width: 250px;
-  height: 180px;
+  height: auto;
   background-color: white;
   padding: 10px;
   display: flex;
@@ -52,7 +52,8 @@ $blue: rgb(0, 112, 177);
 }
 
 .flight-container {
-  height: 70px;
+  height: auto;
+  min-height: 70px;
   display: flex;
   transition: all ease-in-out 100ms;
   p{
@@ -60,6 +61,8 @@ $blue: rgb(0, 112, 177);
     margin: 0;
   }
   .delete-container{
+    margin: auto;
+    margin-right: 10px;
     float: right;
     display: none;
   }
