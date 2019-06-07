@@ -14,7 +14,7 @@ import Fab from '@material-ui/core/Fab';
 const FlightsData = createContext();
 
 
-const WriteCosmo = ({ data }) => {
+const WriteCosmo = ({ data, getData }) => {
   if (data == null) {
     console.log("chyba výpisu kosmonautů");
     return null;
@@ -24,6 +24,9 @@ const WriteCosmo = ({ data }) => {
     return (
       <div key={cosmo._id}>
         {cosmo.name} {cosmo.surName}
+        <div className="delete-container">
+          <DeleteIcon onClick={() => DeleteCosmonaut(cosmo._id, getData)} />
+        </div>
       </div>
     )
   });
@@ -62,8 +65,14 @@ const WriteFlights = (props) => {
 
         return null;
       }
+      if (name, surName, age, exp == '') {
+        window.alert("Nejsou vyplněna všechna povinná okna");
+        return null;
+      }
 
       RegisterCosmonaut(name, surName, age, exp, flight._id, props.getData);
+      setCosmotoggle(!cosmoToggle);
+      resetC();
     }
 
     return (
@@ -71,7 +80,7 @@ const WriteFlights = (props) => {
         <div className="text-container">
           <div>{flight.date}</div>
           <div>{flight.capacity}</div>
-          <WriteCosmo data={flight.registeredCosmonauts} />
+          <WriteCosmo data={flight.registeredCosmonauts} getData={props.getData} />
         </div>
         <div className="delete-container">
           <AddIcon onClick={() => setCosmotoggle(!cosmoToggle)} />
@@ -89,7 +98,7 @@ const WriteFlights = (props) => {
               onAgeChange={e => setAge(e.target.value)}
               exp={exp}
               onExpChange={e => setExp(e.target.value)}
-              submit={e => { e.preventDefault(); reg(); setCosmotoggle(!cosmoToggle); resetC() }}
+              submit={e => { e.preventDefault(); reg() }}
               onCancleClick={() => { setCosmotoggle(!cosmoToggle); resetC() }}
             />
           </React.Fragment>
@@ -119,7 +128,18 @@ const App = () => {
     const dataf = await getFlights();
 
     setFlight(dataf);
-  }
+  };
+
+  const makeFlight = () => {
+    if (date, capacity == '') {
+      window.alert("Nejsou vyplněna všechna povinná okna");
+      return null;
+    };
+
+    CreateFlight(date, capacity, getF);
+    setFlightToggle(!flightToggle);
+    resetF();
+  };
 
 
 
@@ -144,7 +164,7 @@ const App = () => {
             <React.Fragment>
               <Backdrop />
               <FlightModal
-                submit={e => { e.preventDefault(); CreateFlight(date, capacity, getF); setFlightToggle(!flightToggle); getF(); resetF() }}
+                submit={e => { e.preventDefault(); makeFlight() }}
                 date={date}
                 onDateChange={e => setDate(e.target.value)}
                 capacity={capacity}
