@@ -20,7 +20,7 @@ module.exports = {
             const flights = await Flight.find();
 
             return flights.map(flight => {
-                return { ...flight._doc, _id: flight.id , registeredCosmonauts: cosmo.bind(this, flight.registeredCosmonauts) }
+                return { ...flight._doc, _id: flight.id, registeredCosmonauts: cosmo.bind(this, flight.registeredCosmonauts) }
             });
         }
         catch (error) {
@@ -50,6 +50,19 @@ module.exports = {
             return null;
         }
         catch (error) {
+            throw error;
+        }
+    },
+
+    updateFlight: async args => {
+        try {
+            await Flight.findByIdAndUpdate(args.id, {
+                date: args.flightInput.date,
+                capacity: args.flightInput.capacity
+            });
+
+            return null;
+        } catch (error) {
             throw error;
         }
     }

@@ -1,14 +1,16 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import './style/style.css'
 import { getFlights } from './queries/queries';
-import { RegisterCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut } from './queries/mutation';
+import { RegisterCosmonaut, CreateFlight, DeleteFlight, DeleteCosmonaut, UpdateFlight } from './queries/mutation';
 import Backdrop from './components/backdrop/Backdrop';
 import FlightModal from './components/modal/FlightModal';
+import UpdateFlightModal from './components/modal/UpdateFlightModal';
 import CosmoModal from './components/modal/CosmoModal';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete'
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
+import Icon from '@material-ui/core/Icon';
 
 
 const FlightsData = createContext();
@@ -40,12 +42,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const WriteFlights = (props) => {
+  const classes = useStyles();
   const data = useContext(FlightsData);
+  const [flightToggle, setFlightToggle] = useState();
   const [cosmoToggle, setCosmotoggle] = useState();
   const [name, setName] = useState('');
   const [surName, setSurName] = useState('');
   const [age, setAge] = useState('');
   const [exp, setExp] = useState('');
+  const [date, setDate] = useState('');
+  const [capacity, setCapacity] = useState('');
 
   const resetC = () => {
     setName('');
@@ -83,8 +89,15 @@ const WriteFlights = (props) => {
           <WriteCosmo data={flight.registeredCosmonauts} getData={props.getData} />
         </div>
         <div className="delete-container">
-          <AddIcon onClick={() => setCosmotoggle(!cosmoToggle)} />
-          <DeleteIcon onClick={() => DeleteFlight(flight._id, props.getData)} />
+          <Fab color="primary" aria-label="Add" size="small" className={classes.fab}>
+            <AddIcon onClick={() => setCosmotoggle(!cosmoToggle)} />
+          </Fab>
+          <Fab aria-label="Delete" size="small" className={classes.fab}>
+            <DeleteIcon onClick={() => DeleteFlight(flight._id, props.getData)} />
+          </Fab>
+          <Fab color="secondary" size="small" aria-label="Edit" className={classes.fab}>
+            <Icon onClick={() => { setFlightToggle(!flightToggle); setDate(flight.date); setCapacity(flight.capacity) }}></Icon>
+          </Fab>
         </div>
         {cosmoToggle &&
           <React.Fragment>
@@ -103,6 +116,18 @@ const WriteFlights = (props) => {
             />
           </React.Fragment>
         }
+        {flightToggle &&
+          <React.Fragment>
+            <Backdrop />
+            <UpdateFlightModal
+              submit={e => { e.preventDefault(); UpdateFlight(date, capacity, flight._id, props.getData); setFlightToggle(!flightToggle); props.resetF() }}
+              date={date}
+              onDateChange={e => setDate(e.target.value)}
+              capacity={capacity}
+              onCapacityChange={e => setCapacity(e.target.value)}
+              onCancleClick={() => { setFlightToggle(!flightToggle); props.resetF() }}
+            />
+          </React.Fragment>}
       </div>
     )
   });
@@ -122,7 +147,7 @@ const App = () => {
   const resetF = () => {
     setDate('');
     setCapacity('');
-  }
+  };
 
   const getF = async () => {
     const dataf = await getFlights();
@@ -158,6 +183,7 @@ const App = () => {
 
           <WriteFlights
             getData={() => getF()}
+            resetF={resetF}
           />
 
           {flightToggle &&

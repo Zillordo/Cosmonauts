@@ -50,5 +50,20 @@ module.exports = {
         catch (error) {
             throw error;
         }
+    },
+
+    updateCosmonaut: async args => {
+        try {
+            await Cosmonaut.findByIdAndUpdate(args.id, {
+                name: args.cosmonautInput.name,
+                surName: args.cosmonautInput.surName,
+                age: args.cosmonautInput.age,
+                experience: args.cosmonautInput.experience
+            });
+
+            return null;
+        } catch (error) {
+            throw error;
+        }
     }
 }
